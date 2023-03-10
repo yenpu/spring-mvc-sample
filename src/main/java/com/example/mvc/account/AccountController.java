@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/mvc/")
@@ -21,8 +23,16 @@ public class AccountController {
         this.repository = repository;
     }
     @GetMapping("/accounts")
-    public Page<Account> findAll() {
+    public Page<Account> findAll(@RequestParam(name = "sleep", required = false) String sleepParam) {
+        final Integer sleep = Integer.valueOf(Optional.ofNullable(sleepParam).orElse("0"));
         final Pageable limit = PageRequest.of(0,100);
+        try {
+            Thread.sleep(sleep * 1000);
+        } catch (InterruptedException e) {
+            // Handle any InterruptedExceptions that may occur
+            e.printStackTrace();
+        }
+
         return this.repository.findAll(limit);
     }
 
